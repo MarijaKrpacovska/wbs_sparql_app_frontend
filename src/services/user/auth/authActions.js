@@ -10,6 +10,9 @@ export const authenticateUser = (email, password) => {
         dispatch({
             type: AT.LOGIN_REQUEST
         });
+        if(localStorage.getItem("jwtToken")!=null)
+            localStorage.removeItem('jwtToken');
+
         axios.post("http://localhost:8090/user/authenticate", credentials)
             .then(response => {
                 let token = response.data.token;
