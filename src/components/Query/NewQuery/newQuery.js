@@ -1,5 +1,10 @@
 import React from 'react';
 import {useHistory} from 'react-router-dom';
+import CodeMirror from "codemirror/codemirror-5.65.3/lib/codemirror.js";
+import "codemirror/codemirror-5.65.3/lib/codemirror.css";
+import "codemirror/codemirror-5.65.3/mode/sparql/sparql";
+import "codemirror/codemirror-5.65.3/theme/dracula.css";
+import {useEffect} from "react";
 
 const NewQuery = (props) => {
 
@@ -9,6 +14,22 @@ const NewQuery = (props) => {
     content: "",
     endpoint: 1
   })
+
+  if(document?.getElementById("content")){
+    if(document.getElementsByClassName("CodeMirror").length === 0) {
+      const editor = CodeMirror.fromTextArea(
+          document.getElementById("content")
+      )
+    }
+  }
+
+  /*useEffect(() => {
+    const editor = CodeMirror.fromTextArea(
+        document.getElementById("uniqueContent")
+    )
+      }
+  )*/
+
 
   const handleChange = (e) => {
     updateFormData({
@@ -25,14 +46,15 @@ const NewQuery = (props) => {
 
     console.log("In newQuery.js - onFormSubmit, endpoint: "+endpoint)
     props.onAddQuery(name, content, endpoint);
-    history.push("/result");
+    history.push("/my-queries");
   }
 
   return(
       <div className="row mt-5">
-        <div className="col-md-5">
-          <form onSubmit={onFormSubmit}>
-            <div className="form-group">
+        <div style={{width: "100%"}} className="col-md-5">
+
+          <form style={{width: "100%"}} onSubmit={onFormSubmit}>
+            <div className="form-group mb-2">
               <label htmlFor="name">Name</label>
               <input type="text"
                      className="form-control"
@@ -43,17 +65,7 @@ const NewQuery = (props) => {
                      onChange={handleChange}
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="price">Query text:</label>
-              <textarea
-                     className="form-control"
-                     id="content"
-                     name="content"
-                     required
-                     onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
+            <div className="form-group mb-2">
               <label>Endpoint</label>
               <select name="endpoint" className="form-control" onChange={handleChange}>
                 {props.endpoints.map((term) =>
@@ -61,7 +73,30 @@ const NewQuery = (props) => {
                 )}
               </select>
             </div>
-            <button id="submit" type="submit" className="btn btn-primary">Submit</button>
+            <div className="form-group mb-2">
+              <label htmlFor="content">Query text:</label>
+              <div style={{border: "solid", borderColor: "lightgray", borderWidth: "0.2px"}}>
+              <textarea
+                     className="form-control code_text_area"
+                     id="content"
+                     name="content"
+                        value="#write query here"
+                     required
+                     style={{height: "260px"}}
+                     onChange={handleChange}
+              />
+              </div>
+            </div>
+
+            <div className={"row"}>
+              <div className={"col-11"}>
+
+              </div>
+              <div className={"col-1"}>
+                <button id="submit" type="submit" className="btn btn-primary mt-4">Execute</button>
+              </div>
+            </div>
+
           </form>
         </div>
       </div>

@@ -29,6 +29,16 @@ const sparqlService = {
             }
         );
     },
+
+    getJsonResult: (id) => {
+        console.log("vleguva vo getr")
+        return axios.get(`/results/select-result-details/${id}`, {
+                headers: {
+                    'Authorization': localStorage.jwtToken
+                }
+            }
+        );
+    },
     fetchEndpoints: () =>{
         //authToken(localStorage.jwtToken);
         return axios.get("/endpoints", {
@@ -50,19 +60,7 @@ const sparqlService = {
                 }
             }
         );
-    },
-    register: (username,name,lastname, email, password, repeatPass, role) => {
-        authToken(localStorage.jwtToken);
-        return axios.post("/auth/register", {
-            "name": name,
-            "username": username,
-            "lastname": lastname,
-            "email": email,
-            "password": password,
-            "repeatPass": repeatPass,
-            "role": "ROLE_USER"
-        });
-    },
+    }
 
 }
 export default sparqlService;

@@ -4,6 +4,7 @@ import NewQuery from "../Query/NewQuery/newQuery";
 import React, {Component} from "react";
 import {BrowserRouter as Router, Redirect, Route, Routes} from 'react-router-dom'
 import SparqlService from "../../repository/sparqlRepository"
+import UserService from "../../repository/userRepository"
 import Endpoints from "../Endpoint/endpoints";
 import QueryResult from "../Result/queryResult";
 import {Provider} from 'react-redux';
@@ -14,6 +15,9 @@ import QueryDetails from "../Query/QueryDetails/queryDetails";
 
 import UserList from "../User/UserList";
 import Login from "../User/Login";
+import Register from "../User/Register";
+import Verify from "../User/Verify";
+import Header from "../Header/header"
 
 class App extends Component {
 
@@ -25,24 +29,32 @@ class App extends Component {
             loggedInUser: JSON.parse(localStorage.getItem('loggedInUser')) || {},
             myQueries:[],
             selectedQuery:{},
-            selectedResult:{}
+            selectedResult:{},
+            selectedJsonResult:{},
+            verifyResponse:""
         }
     }
 
     render() {
         return (
             <Router>
+                <Header/>
                 <main>
                     <div className="container">
+
                         <Route path={"/query/:id"} exact render={() =>
                             <QueryDetails selectedQuery={this.state.selectedQuery}
-                                          selectedResult={this.state.selectedResult}/>}/>
+                                          selectedResult={this.state.selectedJsonResult}/>}/>
                         <Route path={"/endpoints"} exact render={() =>
                             <Endpoints endpoints={this.state.endpoints}/>}/>
                         <Route path={"/my-queries"} exact render={() =>
                             <Queries myQueries={this.state.myQueries}
                                      onDetails={this.getQuery}/>}/>
                         <Route path="/login" exact component={Login}/>
+                        <Route path="/register" exact render={() =>
+                            <Register onRegister={this.register}/>}/>
+                        <Route path="/verify-email" exact render={() =>
+                            <Verify onVerify={this.verify}/>}/>
 
                         <Route path="/users" exact component={UserList}/>
                         <Route path="/users" exact component={() =>
@@ -101,6 +113,13 @@ class App extends Component {
                     selectedResult: data.data
                 })
             })
+        SparqlService.getJsonResult(id)
+            .then((data) => {
+                console.log("vo getMovie"+typeof (data.data))
+                this.setState({
+                    selectedJsonResult: data.data
+                })
+            })
     }
     addQuery = (name, content, endpointId) => {
         console.log("In App.js - addQuery function, endpointId: "+endpointId);
@@ -109,9 +128,27 @@ class App extends Component {
                 console.log("logging data");
                 console.log(data.data);
                 this.setState({
-                    lastResult: data.data
+                    selectedQuery: data.data
                 });
             })
+    }
+
+    verify = (code) => {
+        console.log("In verify");
+        UserService.verify(code)
+            .then((data) => {
+                console.log("logging data");
+                console.log(data.data);
+                this.setState({
+                    verifyResponse: data.data
+                });
+            })
+    }
+    register = (name, email, password, repeatPassword, mobile) => {
+        console.log("register");
+        UserService.register(name, email, password, repeatPassword,mobile).then(
+            this.loadEndpoints
+        )
     }
 
 

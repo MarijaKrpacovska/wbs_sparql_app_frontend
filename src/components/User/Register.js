@@ -1,96 +1,145 @@
-import React, { Component } from 'react';
-import {Row, Col, Card, Form, InputGroup, FormControl, Button} from 'react-bootstrap';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faPhone, faEnvelope, faLock, faUndo, faUserPlus, faUser} from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
+import {useHistory} from 'react-router-dom';
 
-export default class Register extends Component {
-    constructor(props) {
-        super(props);
-        this.state = this.initialState;
-    }
+const Register = (props) => {
 
-    initialState = {
-        name:'', email:'', password:'', contact:''
+    const validEmailRegex = RegExp(
+        /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+    );
+    const validateForm = errors => {
+        let valid = true;
+        Object.values(errors).forEach(val => val.length > 0 && (valid = false));
+        return valid;
     };
 
-    userChange = event => {
-        this.setState({
-            [event.target.name] : event.target.value
+    const history = useHistory();
+    const [formData, updateFormData] = React.useState({
+        name: "",
+        email: "",
+        password: "",
+        repeatPassword: "",
+        mobile:""
+    })
+
+    const [errors, updateErrors] = React.useState({
+        email: "",
+        password: "",
+    })
+
+    const handleChange = (e) => {
+        updateFormData({
+            ...formData,
+            [e.target.name]: e.target.value.trim()
+        })
+
+        const { name, value } = e.target;
+        let errors = errors;
+
+        switch (name) {
+            case 'email':
+                errors.email =
+                    validEmailRegex.test(value)
+                        ? ''
+                        : 'Email is not valid!';
+                break;
+            case 'password':
+                errors.password =
+                    value.length < 8
+                        ? 'Password must be at least 8 characters long!'
+                        : '';
+                break;
+            default:
+                break;
+        }
+
+        updateErrors({
+            ...errors,
+            errors, [name]: value
         });
-    };
-
-    resetRegisterForm = () => {
-        this.setState(() => this.initialState);
-    };
-
-    render() {
-        const {name, email, password, contact} = this.state;
-
-        return (
-            <Row className="justify-content-md-center">
-                <Col xs={5}>
-                    <Card className={"border border-dark bg-dark text-white"}>
-                        <Card.Header>
-                            <FontAwesomeIcon icon={faUserPlus}/> Register
-                        </Card.Header>
-                        <Card.Body>
-                            <Form.Row>
-                                <Form.Group as={Col}>
-                                    <InputGroup>
-                                        <InputGroup.Prepend>
-                                            <InputGroup.Text><FontAwesomeIcon icon={faUser}/></InputGroup.Text>
-                                        </InputGroup.Prepend>
-                                        <FormControl autoComplete="off" type="text" name="name" value={name} onChange={this.userChange}
-                                                     className={"bg-dark text-white"} placeholder="Enter Name"/>
-                                    </InputGroup>
-                                </Form.Group>
-                            </Form.Row>
-                            <Form.Row>
-                                <Form.Group as={Col}>
-                                    <InputGroup>
-                                        <InputGroup.Prepend>
-                                            <InputGroup.Text><FontAwesomeIcon icon={faEnvelope}/></InputGroup.Text>
-                                        </InputGroup.Prepend>
-                                        <FormControl required autoComplete="off" type="text" name="email" value={email} onChange={this.userChange}
-                                                     className={"bg-dark text-white"} placeholder="Enter Email Address"/>
-                                    </InputGroup>
-                                </Form.Group>
-                            </Form.Row>
-                            <Form.Row>
-                                <Form.Group as={Col}>
-                                    <InputGroup>
-                                        <InputGroup.Prepend>
-                                            <InputGroup.Text><FontAwesomeIcon icon={faLock}/></InputGroup.Text>
-                                        </InputGroup.Prepend>
-                                        <FormControl required autoComplete="off" type="password" name="password" value={password} onChange={this.userChange}
-                                                     className={"bg-dark text-white"} placeholder="Enter Password"/>
-                                    </InputGroup>
-                                </Form.Group>
-                            </Form.Row>
-                            <Form.Row>
-                                <Form.Group as={Col}>
-                                    <InputGroup>
-                                        <InputGroup.Prepend>
-                                            <InputGroup.Text><FontAwesomeIcon icon={faPhone}/></InputGroup.Text>
-                                        </InputGroup.Prepend>
-                                        <FormControl autoComplete="off" type="text" name="contact" value={contact} onChange={this.userChange}
-                                                     className={"bg-dark text-white"} placeholder="Enter Contact Number"/>
-                                    </InputGroup>
-                                </Form.Group>
-                            </Form.Row>
-                        </Card.Body>
-                        <Card.Footer style={{"text-align":"right"}}>
-                            <Button size="sm" type="button" variant="success"
-                                    disabled={this.state.email.length === 0 || this.state.password.length === 0}>
-                                <FontAwesomeIcon icon={faUserPlus}/> Register
-                            </Button>{' '}
-                            <Button size="sm" type="button" variant="info" onClick={this.resetRegisterForm}>
-                                <FontAwesomeIcon icon={faUndo}/> Reset
-                            </Button>
-                        </Card.Footer>
-                    </Card>
-                </Col>
-            </Row>
-        );
     }
+
+    const onFormSubmit = (e) => {
+        e.preventDefault();
+        const name = formData.name;
+        const email = formData.email;
+        const password = formData.password;
+        const repeatPassword = formData.repeatPassword;
+        const mobile = formData.mobile;
+
+        if(validateForm(errors)) {
+            console.info('Valid Form')
+        }else{
+            console.error('Invalid Form')
+        }
+
+        props.onRegister(name, email, password, repeatPassword, mobile);
+        history.push("/verify-email");
+    }
+
+    return(
+        <div className="row mt-5">
+            <div className="col-md-5">
+                <form onSubmit={onFormSubmit}>
+                    <div className="form-group">
+                        <label htmlFor="name">Name</label>
+                        <input type="text"
+                               className="form-control"
+                               id="name"
+                               name="name"
+                               required
+                               onChange={handleChange}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="email">Email</label>
+                        <input type="text"
+                               className="form-control"
+                               id="email"
+                               name="email"
+                               required
+                               onChange={handleChange}
+                        />
+                        {errors.email.length > 0 &&
+                        <span className='error'>{errors.email}</span>}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="password">Password</label>
+                        <input type="password"
+                               className="form-control"
+                               id="password"
+                               name="password"
+                               required
+                               onChange={handleChange}
+                        />
+                        {errors.password.length > 0 &&
+                        <span className='error'>{errors.password}</span>}
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="repeatPassword">Repeat Password</label>
+                        <input type="password"
+                               className="form-control"
+                               id="repeatPassword"
+                               name="repeatPassword"
+                               required
+                               onChange={handleChange}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="mobile">Mobile</label>
+                        <input type="text"
+                               className="form-control"
+                               id="mobile"
+                               name="mobile"
+                               required
+                               onChange={handleChange}
+                        />
+                    </div>
+                    <button id="submit" type="submit" className="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    )
 }
+
+export default Register;

@@ -25,7 +25,9 @@ class Login extends Component {
         this.props.authenticateUser(this.state.email, this.state.password);
         setTimeout(() => {
             if(this.props.auth.isLoggedIn) {
-                return this.props.history.push("/");
+                //window.location.reload(false);
+                //return this.props.history.push("/");
+                window.location.href = "/new-query";
             } else {
                 this.resetLoginForm();
                 this.setState({"error":"Invalid email and password"});
@@ -41,10 +43,10 @@ class Login extends Component {
         const {email, password, error} = this.state;
 
         return (
-            <Row className="justify-content-md-center">
-                <Col xs={5}>
+            <Row className="mt-5 justify-content-md-center">
+                <Col className={"mt-5"} xs={5}>
                     {error && <Alert variant="danger">{error}</Alert>}
-                    <Card className={"border border-dark bg-dark text-white"}>
+                    <Card className={"mt-5 border border-dark bg-dark text-white"}>
                         <Card.Header>
                             <FontAwesomeIcon icon={faSignInAlt}/> Login
                         </Card.Header>
