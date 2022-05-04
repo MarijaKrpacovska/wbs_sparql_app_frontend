@@ -17,9 +17,11 @@ export const authenticateUser = (email, password) => {
             .then(response => {
                 let token = response.data.token;
                 let email = response.data.name;
+                let roles = response.data.authorities;
                 console.log(token)
                 localStorage.setItem('jwtToken', token);
                 localStorage.setItem('email', email);
+                localStorage.setItem('roles', roles);
                 dispatch(success(true));
             })
             .catch(error => {

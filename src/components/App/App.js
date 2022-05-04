@@ -6,7 +6,7 @@ import {BrowserRouter as Router, Redirect, Route, Routes} from 'react-router-dom
 import SparqlService from "../../repository/sparqlRepository"
 import UserService from "../../repository/userRepository"
 import Endpoints from "../Endpoint/endpoints";
-import QueryResult from "../Result/queryResult";
+import QueryResult from "../Result/getResultForQuery/queryResult";
 import {Provider} from 'react-redux';
 import store from '../../services/store';
 
@@ -19,16 +19,23 @@ import Register from "../User/Register";
 import Verify from "../User/Verify";
 import Header from "../Header/header"
 
+import NewEndpoint from "../Endpoint/add/newEndpoint";
+import EndpointEdit from "../Endpoint/edit/endpointEdit";
+import EndpointsList from "../Endpoint/endpointsList/EndpointsList";
+import QueriesList from "../Query/ManageQueries/allQueries/QueriesList";
+
 class App extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             endpoints: [],
+            queries: [],
             lastResult: [],
             loggedInUser: JSON.parse(localStorage.getItem('loggedInUser')) || {},
             myQueries:[],
             selectedQuery:{},
+            selectedEndpoint:{},
             selectedResult:{},
             selectedJsonResult:{},
             verifyResponse:""
@@ -41,12 +48,20 @@ class App extends Component {
                 <Header/>
                 <main>
                     <div className="container">
+                        <Route path={"/endpoints/edit/:id"} exact render={() =>
+                            <EndpointEdit onEditEndpoint={this.editEndpoint}
+                                         endpoint={this.state.selectedEndpoint}/>}/>
 
                         <Route path={"/query/:id"} exact render={() =>
                             <QueryDetails selectedQuery={this.state.selectedQuery}
                                           selectedResult={this.state.selectedJsonResult}/>}/>
+                        <Route path={"/add-endpoint"} exact render={() =>
+                            <NewEndpoint onAddEndpoint={this.addEndpoint}/>}/>
                         <Route path={"/endpoints"} exact render={() =>
-                            <Endpoints endpoints={this.state.endpoints}/>}/>
+                            <Endpoints endpoints={this.state.endpoints}
+                                       onDelete={this.deleteEndpoint}
+                                       onEdit={this.getEndpoint}/>}
+                        />
                         <Route path={"/my-queries"} exact render={() =>
                             <Queries myQueries={this.state.myQueries}
                                      onDetails={this.getQuery}/>}/>
@@ -59,11 +74,16 @@ class App extends Component {
                         <Route path="/users" exact component={UserList}/>
                         <Route path="/users" exact component={() =>
                             <Provider store={store}><UserList/></Provider>}/>
-                        <Route path={"/new-query"} exact render={() =>
+                        <Route path={["/","/new-query"]} exact render={() =>
                             <NewQuery endpoints={this.state.endpoints}
                                       onAddQuery={this.addQuery}/>}/>
-
-
+                        <Route path={"/manage-endpoints"} exact render={() =>
+                            <EndpointsList endpoints={this.state.endpoints}
+                                      onDelete={this.deleteEndpoint}
+                                      onEdit={this.getEndpoint}/>}/>
+                        <Route path={"/manage-queries"} exact render={() =>
+                            <QueriesList queries={this.state.queries}
+                                           onDelete={this.deleteQuery}/>}/>
                     </div>
 
                 </main>
@@ -74,6 +94,7 @@ class App extends Component {
     componentDidMount() {
         this.loadEndpoints();
         this.loadMyQueries();
+        this.loadQueries();
     }
 
     loadEndpoints = () => {
@@ -89,6 +110,14 @@ class App extends Component {
             .then((data) => {
                 this.setState({
                     myQueries: data.data
+                })
+            });
+    }
+    loadQueries = () => {
+        SparqlService.fetchQueries()
+            .then((data) => {
+                this.setState({
+                    queries: data.data
                 })
             });
     }
@@ -121,6 +150,20 @@ class App extends Component {
                 })
             })
     }
+
+    deleteEndpoint = (id) => {
+        SparqlService.deleteEndpoint(id)
+            .then(() => {
+                this.loadEndpoints();
+            });
+    }
+    deleteQuery = (id) => {
+        SparqlService.deleteQuery(id)
+            .then(() => {
+                this.loadQueries();
+            });
+    }
+
     addQuery = (name, content, endpointId) => {
         console.log("In App.js - addQuery function, endpointId: "+endpointId);
         SparqlService.addQuery(name, content, endpointId)
@@ -130,6 +173,27 @@ class App extends Component {
                 this.setState({
                     selectedQuery: data.data
                 });
+            })
+    }
+    addEndpoint = (name, url) => {
+        SparqlService.addEndpoint(name, url)
+            .then((data) => {
+                this.loadEndpoints();
+            })
+    }
+    getEndpoint = (id) => {
+        SparqlService.getEndpoint(id)
+            .then((data) => {
+                this.setState({
+                    selectedEndpoint: data.data
+                })
+            })
+    }
+
+    editEndpoint = (id, name, url) => {
+        SparqlService.editEndpoint(id, name, url)
+            .then((data) => {
+                this.loadEndpoints();
             })
     }
 

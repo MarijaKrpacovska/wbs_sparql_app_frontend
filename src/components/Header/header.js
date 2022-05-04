@@ -21,6 +21,14 @@ const header = (props) => {
         <Link className="btn btn-outline-info my-2 my-sm-0" to={"/register"}>Register</Link></li></ul>);
     }
 
+    let myEndpointManagement
+    let myQueriesManagement
+    if (localStorage?.roles?.includes("ROLE_ADMIN")) {
+        myEndpointManagement = (<Link className="nav-link" to={"/manage-endpoints"}>Manage Endpoints</Link>);
+        myQueriesManagement = (<Link className="nav-link" to={"/manage-queries"}>Manage Queries</Link>);
+    } else {
+    }
+
     return (
         <header>
 
@@ -62,6 +70,12 @@ const header = (props) => {
                                 </li>
                                 <li  className="nav-item active">
                                     {myQueries}
+                                </li>
+                                <li>
+                                    {myEndpointManagement}
+                                </li>
+                                <li>
+                                    {myQueriesManagement}
                                 </li>
                             </ul>
                         </Nav>

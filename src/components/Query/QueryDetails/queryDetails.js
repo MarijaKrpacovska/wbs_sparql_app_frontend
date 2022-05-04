@@ -1,5 +1,7 @@
 import React from "react";
 import {Link} from 'react-router-dom';
+import SelectQueryResultTable from "../../Result/resultForQueryTypes/select/table/selectQueryResultTable";
+import QueryResult from "../../Result/getResultForQuery/queryResult";
 
 const QueryDetails = (props) => {
     console.log("selected result: "+props.selectedResult)
@@ -14,7 +16,7 @@ const QueryDetails = (props) => {
                     <section>
                         <div className={"row"}>
 
-                            <div className={"col-md-8"}>
+                            <div className={"col-md-12"}>
                                 <div className={"row"}>
                                     <div className={"col-md-7"}>
                                         <h1 className={"text-dark nameOfMovie"}>
@@ -32,69 +34,8 @@ const QueryDetails = (props) => {
                     </section>
                     <hr/>
                     <section>
-                        <div className={"row"}>
-
-                            <div className={"col-md-8"}>
-                                <div className={"row"}>
-                                    <h5>
-                                        Results:
-                                    </h5>
-                                    <div>
-
-                                        <table className={"table table-striped w-100"}>
-                                            <thead className={"fw-bold"}>
-                                            {
-                                                typeof(props?.selectedResult?.jsonContent?.sparql?.head?.variable?.name)=="string"
-                                                ? props?.selectedResult?.jsonContent?.sparql?.head?.variable?.name
-                                                : props?.selectedResult?.jsonContent?.sparql?.head?.variable?.map((term) => {
-                                                        return (
-                                                            <th>{term?.name}</th>
-                                                        );
-                                                    })
-                                            }
-                                            </thead>
-                                            <tbody>
-                                            {
-                                                props?.selectedResult?.jsonContent?.sparql?.results?.result?.map((term) => {
-                                                    return (
-                                                        <tr>{
-                                                            typeof(term?.binding?.uri) == "string"
-                                                            ?
-                                                                <td>{
-                                                                    term?.binding?.uri != null
-                                                                        ? <a href={term?.binding?.uri}>{term?.binding?.uri}</a> :
-                                                                        <p>{term?.binding?.literal}</p>
-                                                                }</td>: term?.binding?.map((termB) => {
-                                                                    console.log("termB")
-                                                                console.log(termB)
-                                                                    return (
-                                                                        <td>{
-                                                                            termB?.uri != null
-                                                                                ? <a href={termB?.uri}>{termB?.uri}</a> :
-                                                                                <p>{termB?.literal}</p>
-                                                                        }</td>
-                                                                    );
-                                                                })
-
-                                                        }
-
-                                                        </tr>
-                                                    );
-                                                })
-                                            }
-                                            </tbody>
-                                            {/*{props?.selectedResult?.jsonContent?.sparql?.head?.variable?.map((term) => {
-                                                return (
-                                                    <thead key={term?.name}>
-                                                        <td>{term?.name}</td>
-                                                    </thead>
-                                                );
-                                            })}*/}
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <QueryResult selectedQuery={props?.selectedQuery}
+                                     selectedResult={props?.selectedResult}></QueryResult>
                     </section>
 
 

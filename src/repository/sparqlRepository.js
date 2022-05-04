@@ -11,6 +11,25 @@ const sparqlService = {
           params: { userEmail: localStorage.email }
       })
   },
+    fetchQueries: () =>{
+        //authToken(localStorage.jwtToken);
+        return axios.get("/queries", {
+            headers: {
+                'Authorization': localStorage.jwtToken
+            }
+        })
+    },
+    deleteQuery: (id) => {
+        return axios.delete(`/queries/delete/${id}`, {
+            headers: {
+                'Authorization': localStorage.jwtToken
+            }
+        });
+    },
+    deleteEndpoint: (id) => {
+        return axios.delete(`/endpoints/delete/${id}`);
+    },
+
     getQuery: (id) => {
         console.log("vleguva vo getMovie")
         return axios.get(`/queries/details/${id}`, {
@@ -19,6 +38,15 @@ const sparqlService = {
             }
         }
             );
+    },
+    getEndpoint: (id) => {
+        console.log("vleguva vo getEndp")
+        return axios.get(`/endpoints/details/${id}`, {
+                headers: {
+                    'Authorization': localStorage.jwtToken
+                }
+            }
+        );
     },
     getResult: (id) => {
         console.log("vleguva vo getr")
@@ -55,6 +83,30 @@ const sparqlService = {
             "endpointId" : endpointId,
             "userEmail" : localStorage.email
         }, {
+                headers: {
+                    'Authorization': localStorage.jwtToken
+                }
+            }
+        );
+    },
+    addEndpoint: (name, url) => {
+        authToken(localStorage.jwtToken);
+        return axios.post("/endpoints/add", {
+                "name" : name,
+                "url" : url
+            }, {
+                headers: {
+                    'Authorization': localStorage.jwtToken
+                }
+            }
+        );
+    },
+    editEndpoint: (id, name, url) => {
+        authToken(localStorage.jwtToken);
+        return axios.post(`/endpoints/edit/${id}`, {
+                "name" : name,
+                "url" : url
+            }, {
                 headers: {
                     'Authorization': localStorage.jwtToken
                 }

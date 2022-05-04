@@ -1,5 +1,5 @@
 import React from 'react';
-import {useHistory} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import CodeMirror from "codemirror/codemirror-5.65.3/lib/codemirror.js";
 import "codemirror/codemirror-5.65.3/lib/codemirror.css";
 import "codemirror/codemirror-5.65.3/mode/sparql/sparql";
@@ -72,6 +72,12 @@ const NewQuery = (props) => {
                     <option key={term.id} value={term.id}>{term.name}</option>
                 )}
               </select>
+
+            </div>
+            <div className="form-group mb-2 row">
+              <div className={"col-lg-10"}> </div>
+              <div className={"col-lg-2"}>
+            <Link to="/add-endpoint">Add Endpoint</Link></div>
             </div>
             <div className="form-group mb-2">
               <label htmlFor="content">Query text:</label>
