@@ -2,6 +2,10 @@ import React from "react";
 import {Link} from "react-router-dom";
 import SelectQueryResultTable from "../resultForQueryTypes/select/table/selectQueryResultTable";
 import ConstructQueryResult from "../resultForQueryTypes/constrAndDescr/constructQueryResult";
+import ConstructOrDescrQueryResult from "../resultForQueryTypes/constrAndDescr/constructOrDescrQueryResult";
+import AskQueryResult from "../resultForQueryTypes/ask/askQueryResult";
+import UnknownQueryTypeMessage from "../resultErrorMessages/unknownQueryTypeMessage";
+import InvalidQueryMessage from "../resultErrorMessages/invalidQueryMessage";
 
 const QueryResult = (props) => {
     console.log(props);
@@ -19,7 +23,7 @@ const QueryResult = (props) => {
                                 </div>
                                 : props?.selectedQuery?.queryType == 'CONSTRUCT'
                                     ? <div>
-                                        <ConstructQueryResult selectedResult={props?.selectedResult}> </ConstructQueryResult>
+                                        <ConstructOrDescrQueryResult selectedResult={props?.selectedResult}> </ConstructOrDescrQueryResult>
                                     </div>
                                     : props?.selectedQuery?.queryType == 'DESCRIBE'
                                         ? <div>
@@ -27,13 +31,13 @@ const QueryResult = (props) => {
                                         </div>
                                         : props?.selectedQuery?.queryType == 'ASK'
                                             ? <div>
-                                                <ConstructQueryResult selectedResult={props?.selectedResult}> </ConstructQueryResult>
+                                                <AskQueryResult selectedResult={props?.selectedResult}> </AskQueryResult>
                                             </div>
                                             : props?.selectedQuery?.queryType == 'UNKNOWN'
                                                 ? <div>
-                                                    <ConstructQueryResult selectedResult={props?.selectedResult}> </ConstructQueryResult>
+                                                    <UnknownQueryTypeMessage> </UnknownQueryTypeMessage>
                                                 </div>
-                                                : <div>other</div>
+                                                : <InvalidQueryMessage> </InvalidQueryMessage>
                         }
                     </div>
                 </div>

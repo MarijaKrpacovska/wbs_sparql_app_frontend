@@ -19,11 +19,12 @@ const QueryDetails = (props) => {
                             <div className={"col-md-12"}>
                                 <div className={"row"}>
                                     <div className={"col-md-7"}>
-                                        <h1 className={"text-dark nameOfMovie"}>
+                                        <h3 className={"text-dark nameOfMovie"}>
                                             {props?.selectedQuery?.name}
-                                        </h1>
+                                        </h3>
                                         <div>
-                                            {props?.selectedQuery?.content}
+                                            <textarea style={{height:"200px", width:"1200px"}} disabled={true} value={props?.selectedQuery?.content}/>
+
                                         </div>
 
 
@@ -32,6 +33,7 @@ const QueryDetails = (props) => {
                             </div>
                         </div>
                     </section>
+                    <br/>
                     <hr/>
                     <section>
                         <QueryResult selectedQuery={props?.selectedQuery}

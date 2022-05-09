@@ -32,12 +32,7 @@ const sparqlService = {
 
     getQuery: (id) => {
         console.log("vleguva vo getMovie")
-        return axios.get(`/queries/details/${id}`, {
-            headers: {
-                'Authorization': localStorage.jwtToken
-            }
-        }
-            );
+        return axios.get(`/queries/details/${id}` );
     },
     getEndpoint: (id) => {
         console.log("vleguva vo getEndp")
@@ -50,30 +45,18 @@ const sparqlService = {
     },
     getResult: (id) => {
         console.log("vleguva vo getr")
-        return axios.get(`/results/details/${id}`, {
-                headers: {
-                    'Authorization': localStorage.jwtToken
-                }
-            }
+        return axios.get(`/results/details/${id}`
         );
     },
 
     getJsonResult: (id) => {
         console.log("vleguva vo getr")
-        return axios.get(`/results/select-result-details/${id}`, {
-                headers: {
-                    'Authorization': localStorage.jwtToken
-                }
-            }
+        return axios.get(`/results/select-result-details/${id}`
         );
     },
     fetchEndpoints: () =>{
         //authToken(localStorage.jwtToken);
-        return axios.get("/endpoints", {
-            headers: {
-                'Authorization': localStorage.jwtToken
-            }
-        })
+        return axios.get("/endpoints")
     },
     addQuery: (name, content, endpointId) => {
         authToken(localStorage.jwtToken);
@@ -82,11 +65,7 @@ const sparqlService = {
             "content" : content,
             "endpointId" : endpointId,
             "userEmail" : localStorage.email
-        }, {
-                headers: {
-                    'Authorization': localStorage.jwtToken
-                }
-            }
+        }
         );
     },
     addEndpoint: (name, url) => {

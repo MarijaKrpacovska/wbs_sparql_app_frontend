@@ -11,7 +11,9 @@ const EndpointTerm = (props) => {
                    onClick={() => props.onDelete(props.term.id)}>
                     Delete
                 </a>
-                <Link className={"btn btn-info ml-2"}
+            </td>
+            <td>
+                <Link className={"btn btn-secondary ml-2"}
                       onClick={() => props.onEdit(props.term.id)}
                       to={`/endpoints/edit/${props.term.id}`}>
                     Edit

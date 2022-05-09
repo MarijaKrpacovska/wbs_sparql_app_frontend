@@ -23,6 +23,7 @@ import NewEndpoint from "../Endpoint/add/newEndpoint";
 import EndpointEdit from "../Endpoint/edit/endpointEdit";
 import EndpointsList from "../Endpoint/endpointsList/EndpointsList";
 import QueriesList from "../Query/ManageQueries/allQueries/QueriesList";
+import MyQueriesList from "../Query/MyQueries/queriesList/MyQueriesList";
 
 class App extends Component {
 
@@ -38,7 +39,11 @@ class App extends Component {
             selectedEndpoint:{},
             selectedResult:{},
             selectedJsonResult:{},
-            verifyResponse:""
+            verifyResponse:"",
+            errorMessage:"",
+            error:false,
+            statusOfRequest:0,
+            authFails:false
         }
     }
 
@@ -48,11 +53,14 @@ class App extends Component {
                 <Header/>
                 <main>
                     <div className="container">
+
                         <Route path={"/endpoints/edit/:id"} exact render={() =>
                             <EndpointEdit onEditEndpoint={this.editEndpoint}
                                          endpoint={this.state.selectedEndpoint}/>}/>
-
                         <Route path={"/query/:id"} exact render={() =>
+                            <QueryDetails selectedQuery={this.state.selectedQuery}
+                                          selectedResult={this.state.selectedJsonResult}/>}/>
+                        <Route path={"/query-executed-success"} exact render={() =>
                             <QueryDetails selectedQuery={this.state.selectedQuery}
                                           selectedResult={this.state.selectedJsonResult}/>}/>
                         <Route path={"/add-endpoint"} exact render={() =>
@@ -62,6 +70,11 @@ class App extends Component {
                                        onDelete={this.deleteEndpoint}
                                        onEdit={this.getEndpoint}/>}
                         />
+                        <Route path={"/my-queries-list"} exact render={() =>
+                            <MyQueriesList authFails ={this.state.authFails}
+                                            queries={this.state.myQueries}
+                                            onDetails={this.getQuery}
+                                            onDelete={this.deleteQuery}/>}/>
                         <Route path={"/my-queries"} exact render={() =>
                             <Queries myQueries={this.state.myQueries}
                                      onDetails={this.getQuery}/>}/>
@@ -85,7 +98,6 @@ class App extends Component {
                             <QueriesList queries={this.state.queries}
                                            onDelete={this.deleteQuery}/>}/>
                     </div>
-
                 </main>
             </Router>
         );
@@ -93,7 +105,15 @@ class App extends Component {
 
     componentDidMount() {
         this.loadEndpoints();
-        this.loadMyQueries();
+        try {
+            this.loadMyQueries();
+        }
+        catch (e){
+            console.log("the error"+e)
+            this.setState({
+                errorMessage: e.toString()
+            })
+        }
         this.loadQueries();
     }
 
@@ -108,10 +128,42 @@ class App extends Component {
     loadMyQueries = () => {
         SparqlService.fetchMyQueries()
             .then((data) => {
+                console.log("VO THEN SUM")
                 this.setState({
                     myQueries: data.data
                 })
-            });
+                console.log("SATUS: "+data.status)
+                this.setState({
+                    errorMessage: data.status
+                })
+                this.setState({
+                    authFails: false
+                })
+            }).catch((r) => {
+            console.log(r)
+            this.setState({
+                error: true
+            })
+            if (r.response) {
+                console.log(r.response.status);
+                this.setState({
+                    statusOfRequest: r.response.status
+                })
+                console.log(r.response.headers);
+                console.log("HIST"+this.props.history)
+                if(r.response.status==401){
+                    console("vleguva vo if 401")
+                    localStorage.removeItem("jwtToken")
+                    localStorage.removeItem("roles")
+                    localStorage.removeItem("email")
+                    this.setState({
+                        authFails: true
+                    })
+
+                }
+            }
+
+        });
     }
     loadQueries = () => {
         SparqlService.fetchQueries()
@@ -161,6 +213,7 @@ class App extends Component {
         SparqlService.deleteQuery(id)
             .then(() => {
                 this.loadQueries();
+                this.loadMyQueries();
             });
     }
 
@@ -168,11 +221,7 @@ class App extends Component {
         console.log("In App.js - addQuery function, endpointId: "+endpointId);
         SparqlService.addQuery(name, content, endpointId)
             .then((data) => {
-                console.log("logging data");
-                console.log(data.data);
-                this.setState({
-                    selectedQuery: data.data
-                });
+                this.getQuery(data.data.id)
             })
     }
     addEndpoint = (name, url) => {

@@ -1,50 +1,55 @@
 import React from 'react';
 import ReactPaginate from 'react-paginate'
-import EndpointTerm from '../endpointTerm/endpointTerm';
-import {Link} from 'react-router-dom';
-import sparqlRepository from "../../../repository/sparqlRepository";
+import MyQueryTerm from "../queriesTerm/myQueryTerm";
+import {Link, Redirect} from 'react-router-dom';
+import sparqlRepository from "../../../../repository/sparqlRepository";
 
-class EndpointsList extends React.Component {
+class MyQueriesList extends React.Component {
+
 
     constructor(props) {
+
         super(props);
 
         this.state = {
             page: 0,
             size: 10
         }
+
     }
 
     render() {
+        console.log("TUKA SUM")
+
         const offset = this.state.size * this.state.page;
         const nextPageOffset = offset + this.state.size;
-        const pageCount = Math.ceil(this.props.endpoints.length / this.state.size);
-        const endpoints = this.getEndpointsPage(offset, nextPageOffset);
-        console.log(endpoints, pageCount)
+        const pageCount = Math.ceil(this.props.queries.length / this.state.size);
+        const queries = this.getQueriesPage(offset, nextPageOffset);
+        console.log(queries, pageCount)
+
+
+        console.log("AUTH FAILS"+this.props.authFails)
 
         return (
             <div className={"container mm-4 mt-5"}>
-                <h3>Manage Endpoints</h3>
+                <h3>Manage Queries</h3>
                 <div className={"row"}>
                     <div className={"table-responsive"}>
                         <table className={"table table-striped"}>
                             <thead>
                             <tr>
                                 <th scope={"col"}>Name</th>
-                                <th scope={"col"}>Url</th>
+                                <th scope={"col"}>Content</th>
+                                <th scope={"col"}>Type</th>
+                                <th scope={"col"}>Endpoint</th>
+                                <th scope={"col"}>Execution time</th>
+                                <th scope={"col"}>Unique url</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {endpoints}
+                            {queries}
                             </tbody>
                         </table>
-                    </div>
-                    <div className="col mb-3">
-                        <div className="row">
-                            <div className="col-sm-12 col-md-12">
-                                <Link className={"btn btn-block btn-dark"} to={"/add-endpoint"}>Add new endpoint</Link>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <ReactPaginate previousLabel={"back"}
@@ -70,16 +75,16 @@ class EndpointsList extends React.Component {
         })
     }
 
-    getEndpointsPage = (offset, nextPageOffset) => {
+    getQueriesPage = (offset, nextPageOffset) => {
         console.log(offset, nextPageOffset)
-        return this.props.endpoints.map((term, index) => {
+        return this.props.queries.map((term, index) => {
             return (
-                <EndpointTerm term={term} onDelete={this.props.onDelete} onEdit={this.props.onEdit}/>
+                <MyQueryTerm term={term} onDelete={this.props.onDelete} onDetails={this.props.onDetails}/>
             );
-        }).filter((endpoint, index) => {
+        }).filter((query, index) => {
             return index >= offset && index < nextPageOffset;
         })
     }
 }
 
-export default EndpointsList;
+export default MyQueriesList;

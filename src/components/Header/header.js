@@ -12,9 +12,13 @@ const header = (props) => {
     let authenticate
     let myQueries
     if (localStorage.jwtToken) {
-        myQueries = (<Link className="nav-link" to={"/my-queries"}>My Queries</Link>);
+        myQueries = (<Link className="nav-link" to={"/my-queries-list"}>My Queries</Link>);
         authenticate = (<button className="btn btn-outline-info my-2 my-sm-0"
-                                onClick={() => localStorage.removeItem("jwtToken")}>Logout</button>);
+                                onClick={() => {
+                                    localStorage.removeItem("jwtToken")
+                                    localStorage.removeItem("roles")
+                                    localStorage.removeItem("email")
+                                }}>Logout</button>);
     } else {
         myQueries = (<li></li>);
         authenticate = (<ul><li><Link className="btn btn-outline-info my-2 my-sm-0" to={"/login"}>Login</Link>

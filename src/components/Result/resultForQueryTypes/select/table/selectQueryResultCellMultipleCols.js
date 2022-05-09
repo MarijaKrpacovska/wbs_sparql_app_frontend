@@ -6,11 +6,16 @@ const SelectQueryCellMultipleCols = (props) => {
             console.log("termB")
             console.log(termB)
             return (
+                // <td>
+                //     test
+                // </td>
                 <td>{
                     termB?.uri != null
                         ?
                         <a href={termB?.uri}>{termB?.uri}</a> :
-                        <p>{termB?.literal}</p>
+                        <div> {termB?.literal?.content}</div>
+                        // <a href={termB?.uri}>{termB?.uri}</a> :
+                        // <p>{termB?.literal}</p>
                 }</td>
             );
         }

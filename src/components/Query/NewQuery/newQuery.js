@@ -8,6 +8,12 @@ import {useEffect} from "react";
 
 const NewQuery = (props) => {
 
+  let addEndpoint
+  if (localStorage?.roles?.includes("ROLE_ADMIN") || localStorage?.roles?.includes("ROLE_USER")) {
+    addEndpoint = (<Link className={"btn btn-block btn-dark btn-sm"} to="/add-endpoint" >Add Endpoint</Link>);
+  } else {
+  }
+
   const history = useHistory();
   const [formData, updateFormData] = React.useState({
     name: "",
@@ -15,13 +21,18 @@ const NewQuery = (props) => {
     endpoint: 1
   })
 
-  if(document?.getElementById("content")){
-    if(document.getElementsByClassName("CodeMirror").length === 0) {
-      const editor = CodeMirror.fromTextArea(
-          document.getElementById("content")
-      )
-    }
-  }
+  // let editor = null
+  // if(document?.getElementById("content")){
+  //   if(document.getElementsByClassName("CodeMirror").length === 0) {
+  //     editor = CodeMirror.fromTextArea(
+  //         document.getElementById("content")
+  //     )
+  //     // updateFormData({
+  //     //   ...formData,
+  //     //   ["content"]: editor.getValue()
+  //     // } )
+  //   }
+  // }
 
   /*useEffect(() => {
     const editor = CodeMirror.fromTextArea(
@@ -32,6 +43,12 @@ const NewQuery = (props) => {
 
 
   const handleChange = (e) => {
+    // if(e.target.name === "content" && editor!=null){
+    //   updateFormData({
+    //       ...formData,
+    //       ["content"]: editor.getValue()
+    //     } )
+    // }
     updateFormData({
       ...formData,
       [e.target.name]: e.target.value.trim()
@@ -46,11 +63,12 @@ const NewQuery = (props) => {
 
     console.log("In newQuery.js - onFormSubmit, endpoint: "+endpoint)
     props.onAddQuery(name, content, endpoint);
-    history.push("/my-queries");
+    history.push("/query-executed-success");
   }
 
   return(
       <div className="row mt-5">
+        <h3>Execute Query</h3>
         <div style={{width: "100%"}} className="col-md-5">
 
           <form style={{width: "100%"}} onSubmit={onFormSubmit}>
@@ -77,7 +95,8 @@ const NewQuery = (props) => {
             <div className="form-group mb-2 row">
               <div className={"col-lg-10"}> </div>
               <div className={"col-lg-2"}>
-            <Link to="/add-endpoint">Add Endpoint</Link></div>
+                {addEndpoint}
+            </div>
             </div>
             <div className="form-group mb-2">
               <label htmlFor="content">Query text:</label>
@@ -86,7 +105,6 @@ const NewQuery = (props) => {
                      className="form-control code_text_area"
                      id="content"
                      name="content"
-                        value="#write query here"
                      required
                      style={{height: "260px"}}
                      onChange={handleChange}

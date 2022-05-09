@@ -17,8 +17,9 @@ const ConstructQueryResult = (props) => {
                             props?.selectedResult?.contentList?.map((term) => {
                             return (
                                 <tr>
-                                    <td>
+                                    <td >
                                         {term.split(" ")[0]}
+
                                     </td>
                                     <td>
                                         {term.split(" ")[1]}

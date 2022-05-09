@@ -9,7 +9,7 @@ const userService = {
             "password": password,
             "repeatPassword": repeatPassword,
             "mobile": mobile,
-            "roleId" : 1
+            "roleId" : 2
         });
     },
     verify: (code) => {

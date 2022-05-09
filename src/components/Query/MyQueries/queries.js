@@ -5,6 +5,7 @@ const Queries = (props) => {
     console.log(props);
     return(
         <div>
+            <h3>My Queries:</h3>
             <table className={"table table-striped"}>
                 <thead>
                 <tr>

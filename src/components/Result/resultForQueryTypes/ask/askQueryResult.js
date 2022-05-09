@@ -3,7 +3,7 @@ import React from "react";
 const AskQueryResult = (props) => {
     return(
         <div>
-            ask
+            {props?.selectedResult?.content}
         </div>
     )
 }
